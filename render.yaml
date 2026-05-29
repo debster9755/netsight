@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: netsight-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: FRONTEND_URL
+        value: https://netsight.vercel.app
+      - key: GRAFANA_URL
+        value: ""
+      - key: GRAFANA_API_TOKEN
+        value: ""
+      - key: CAPTURE_INTERFACE
+        value: eth0
