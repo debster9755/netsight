@@ -1,10 +1,13 @@
+"""SSL/TLS certificate checker using the cryptography library."""
 import asyncio
 import ssl
 import socket
 from datetime import datetime, timezone
 from typing import Any
 
-import OpenSSL.crypto as crypto
+import certifi
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
 
 
 async def check(host: str, port: int = 443) -> dict[str, Any]:
@@ -14,51 +17,56 @@ async def check(host: str, port: int = 443) -> dict[str, Any]:
 def _check_sync(host: str, port: int) -> dict[str, Any]:
     try:
         ctx = ssl.create_default_context()
-        conn = ctx.wrap_socket(socket.create_connection((host, port), timeout=10), server_hostname=host)
+        ctx.load_verify_locations(certifi.where())
+        conn = ctx.wrap_socket(
+            socket.create_connection((host, port), timeout=10),
+            server_hostname=host,
+        )
         cert_der = conn.getpeercert(binary_form=True)
         cipher = conn.cipher()
         tls_version = conn.version()
         conn.close()
 
-        x509 = crypto.load_certificate(crypto.FILETYPE_ASN1, cert_der)
-        not_after = _parse_asn1_date(x509.get_notAfter())
-        not_before = _parse_asn1_date(x509.get_notBefore())
+        cert = x509.load_der_x509_certificate(cert_der, default_backend())
         now = datetime.now(timezone.utc)
-        days_remaining = (not_after - now).days
+        days_remaining = (cert.not_valid_after_utc - now).days
 
-        subject = dict(x509.get_subject().get_components())
-        issuer = dict(x509.get_issuer().get_components())
+        subject_cn = _get_attr(cert.subject, x509.NameOID.COMMON_NAME)
+        issuer_cn = _get_attr(cert.issuer, x509.NameOID.COMMON_NAME)
+        issuer_org = _get_attr(cert.issuer, x509.NameOID.ORGANIZATION_NAME)
 
-        # Build SAN list
+        # SAN
         sans = []
-        for i in range(x509.get_extension_count()):
-            ext = x509.get_extension(i)
-            if ext.get_short_name() == b"subjectAltName":
-                sans = [s.strip().replace("DNS:", "") for s in str(ext).split(",")]
-
-        chain_depth = x509.get_extension_count()  # simplified
+        try:
+            san_ext = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
+            sans = [name.value for name in san_ext.value]
+        except x509.ExtensionNotFound:
+            pass
 
         return {
             "host": host,
             "port": port,
             "valid": days_remaining > 0,
             "days_remaining": days_remaining,
-            "not_before": not_before.isoformat(),
-            "not_after": not_after.isoformat(),
-            "subject_cn": subject.get(b"CN", b"").decode(),
-            "issuer_cn": issuer.get(b"CN", b"").decode(),
-            "issuer_org": issuer.get(b"O", b"").decode(),
-            "san": sans,
+            "not_before": cert.not_valid_before_utc.isoformat(),
+            "not_after": cert.not_valid_after_utc.isoformat(),
+            "subject_cn": subject_cn,
+            "issuer_cn": issuer_cn,
+            "issuer_org": issuer_org,
+            "san": sans[:10],
             "tls_version": tls_version,
             "cipher_suite": cipher[0] if cipher else None,
             "cipher_bits": cipher[2] if cipher else None,
             "ok": True,
         }
     except ssl.SSLCertVerificationError as exc:
-        return {"host": host, "port": port, "ok": False, "error": f"Certificate verification failed: {exc}"}
+        return {"host": host, "port": port, "ok": False, "valid": False, "error": f"Certificate verification failed: {exc}"}
     except Exception as exc:
-        return {"host": host, "port": port, "ok": False, "error": str(exc)}
+        return {"host": host, "port": port, "ok": False, "valid": False, "error": str(exc)}
 
 
-def _parse_asn1_date(raw: bytes) -> datetime:
-    return datetime.strptime(raw.decode(), "%Y%m%d%H%M%SZ").replace(tzinfo=timezone.utc)
+def _get_attr(name, oid) -> str:
+    try:
+        return name.get_attributes_for_oid(oid)[0].value
+    except (IndexError, Exception):
+        return ""

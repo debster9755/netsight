@@ -130,7 +130,7 @@ function DiagSummary({ title, data }: { title: string; data: Record<string, unkn
   if (title === 'HTTP') {
     if (!data.ok) return <p className="text-sm text-danger">{data.error as string}</p>
     const t = (data.timings_ms as Record<string, number>) || {}
-    return <p className="text-sm text-gray-400">HTTP {data.status_code as number} · TTFB {t.ttfb}ms · {data.cdn || 'no CDN'}</p>
+    return <p className="text-sm text-gray-400">HTTP {data.status_code as number} · TTFB {t.ttfb}ms · {(data.cdn as string) || 'no CDN'}</p>
   }
   if (title === 'Traceroute') {
     const hops = data.hop_count as number

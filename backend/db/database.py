@@ -56,8 +56,8 @@ async def init_db():
 
 
 async def _seed_playbook(db: aiosqlite.Connection):
-    count = await db.execute_fetchall("SELECT COUNT(*) AS c FROM resolution_playbook")
-    if count[0]["c"] > 0:
+    count = await db.execute_fetchall("SELECT COUNT(*) FROM resolution_playbook")
+    if count[0][0] > 0:
         return
     entries = [
         ("dns_propagation", "DNS not propagated globally", '["dig +trace {host}", "nslookup {host} 8.8.8.8", "nslookup {host} 1.1.1.1"]', "dns"),

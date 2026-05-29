@@ -1,33 +1,30 @@
 # Web framework
-fastapi==0.115.5
-uvicorn[standard]==0.32.1
-python-multipart==0.0.12
+fastapi>=0.115
+uvicorn[standard]>=0.32
+python-multipart>=0.0.12
 
 # HTTP client (async, with timing hooks)
-httpx==0.28.1
+httpx>=0.28
 
 # DNS
-dnspython==2.7.0
+dnspython>=2.7
 
 # SSL
-pyOpenSSL==24.3.0
-cryptography==44.0.0
+cryptography>=44
+certifi>=2024
 
 # Packet capture & analysis
-scapy==2.6.1
-dpkt==1.9.8
-
-# HAR parsing
-haralyzer==1.9.3
+scapy>=2.6
+dpkt>=1.9
 
 # AI
-anthropic==0.40.0
+anthropic>=0.40
 
 # Database
-aiosqlite==0.20.0
+aiosqlite>=0.20
 
 # Utilities
-python-dotenv==1.0.1
-pydantic==2.10.3
-pydantic-settings==2.7.0
-icmplib==3.0.4
+python-dotenv>=1.0
+pydantic>=2.10
+pydantic-settings>=2.7
+icmplib>=3.0
