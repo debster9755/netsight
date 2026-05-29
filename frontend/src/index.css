@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-gray-100 font-mono antialiased;
+  }
+  ::-webkit-scrollbar { @apply w-1.5 h-1.5; }
+  ::-webkit-scrollbar-track { @apply bg-surface; }
+  ::-webkit-scrollbar-thumb { @apply bg-border rounded; }
+}
+
+@layer components {
+  .card { @apply bg-panel border border-border rounded-xl p-4; }
+  .badge-ok { @apply bg-green-900/40 text-success px-2 py-0.5 rounded text-xs; }
+  .badge-warn { @apply bg-yellow-900/40 text-warning px-2 py-0.5 rounded text-xs; }
+  .badge-err { @apply bg-red-900/40 text-danger px-2 py-0.5 rounded text-xs; }
+  .badge-info { @apply bg-indigo-900/40 text-accent-hover px-2 py-0.5 rounded text-xs; }
+  .btn-primary { @apply bg-accent hover:bg-accent-hover text-white px-4 py-2 rounded-lg transition-colors font-sans font-medium text-sm; }
+  .btn-ghost { @apply border border-border hover:border-accent text-gray-400 hover:text-white px-4 py-2 rounded-lg transition-colors font-sans text-sm; }
+  .input { @apply bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-accent w-full; }
+}
