@@ -4,7 +4,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://netsight-backend.onrender.com/$1" },
+    { "source": "/api/(.*)", "destination": "https://netsight-aqva.onrender.com/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
