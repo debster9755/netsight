@@ -7,6 +7,61 @@ Built for CDN/edge infrastructure support engineers. Replaces the scattered tool
 
 ---
 
+## Why It Exists
+
+### The Problem
+
+When a CDN edge node misbehaves, a support engineer today opens **six different tools** — and none of them talk to each other.
+
+```
+dig bunny.net          →  raw DNS output, manual interpretation
+traceroute bunny.net   →  hop-by-hop RTT, no anomaly detection
+curl -I bunny.net      →  status code, no structured timing
+openssl s_client ...   →  cert dump, manual expiry math
+mtr bunny.net          →  live hops, terminal-only
+Wireshark              →  packet capture, requires expertise + GUI
+```
+
+The result: an engineer spends the first **20–40 minutes** of a P1 incident copy-pasting output between tools, mentally correlating results, and guessing root cause — before any fix is attempted.
+
+---
+
+### Business & Operational Impact
+
+| Failure Mode | Real Cost |
+|---|---|
+| DNS propagation lag during a CDN migration | Origin traffic floods unexpectedly, SLA breach |
+| SSL cert expiry missed by ops team | Total outage, customer trust damage |
+| High TTFB at specific edge PoP | Conversion rate drops, A/B test data corrupted |
+| IP abuse pattern in CDN logs undetected | Bandwidth bill spike, legitimate users throttled |
+| P1 MTTR exceeds 30 min | SLA credit issued, account review triggered |
+
+For a CDN provider, **each minute of unresolved P1 can cost $5,000–$50,000** in SLA penalties, customer churn, and engineering burn. The bottleneck is almost never the fix — it's the diagnosis.
+
+---
+
+### Why Solving This Matters
+
+1. **Diagnosis is the bottleneck, not the fix.** Once root cause is known, resolution is usually 5 minutes. Getting there without tooling takes 30+.
+2. **Tribal knowledge doesn't scale.** Senior engineers carry mental models for CDN edge quirks, TTL gotchas, and SSL chain behaviours. NetSight encodes that into AI prompts accessible to any L1.
+3. **Correlation without effort.** A traceroute spike at hop 4 that aligns with a Grafana error rate jump at 14:32 — that's the signal. Humans miss it across disconnected tools; NetSight surfaces it automatically.
+4. **Every CDN incident is a customer incident.** Brands on shared infrastructure cannot distinguish a provider fault from an origin fault without forensic tooling. NetSight gives support teams the proof.
+
+---
+
+### Metrics NetSight Moves
+
+| Metric | Baseline (manual tools) | With NetSight |
+|---|---|---|
+| **MTTD** — Mean Time to Detect root cause | 20–40 min (sequential tool runs) | 2–5 min (parallel + AI) |
+| **MTTR** — Mean Time to Resolve | 45–90 min | 15–30 min |
+| **SLA compliance rate** | Degraded during complex incidents | Consistent — faster diagnosis = faster fix |
+| **Escalation rate** (L1 → L2 → L3) | High — L1 lacks tooling context | Lower — AI guidance closes the gap |
+| **Engineer onboarding time** | 3–6 months to network debugging fluency | Weeks — platform encodes the expertise |
+| **Diagnostic history coverage** | Zero — each investigation starts cold | Full — SQLite history, searchable, re-runnable |
+
+---
+
 ## Features
 
 | Feature | Description |
