@@ -3,6 +3,12 @@
 > **Intelligent Network Diagnostic & Observability Platform**  
 > Wireshark + Fiddler + Grafana + AI SRE — in one browser tab.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)](https://frontend-lime-psi-11.vercel.app)
+[![Backend](https://img.shields.io/badge/Backend-Render-46E3B7?logo=render&logoColor=white)](https://netsight-aqva.onrender.com)
+[![GitHub](https://img.shields.io/badge/Source-GitHub-181717?logo=github)](https://github.com/debster9755/netsight)
+
+> **Note:** Backend is on Render's free tier — cold starts take ~30s after inactivity.
+
 Built for CDN/edge infrastructure support engineers. Replaces the scattered toolkit of `traceroute`, `curl`, `mtr`, `dig`, Wireshark, tcpdump, and Fiddler with a unified web app that adds AI-powered root cause analysis and resolution recommendations.
 
 ---
